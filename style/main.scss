@@ -1,0 +1,146 @@
+@use "variables.scss" as *;
+
+:root {
+  --font-scale: 1;
+  font-size: calc(62.5% * var(--font-scale));
+}
+
+body {
+  background: black;
+}
+
+#game {
+  width: 100vw;
+  height: 56.25vw;
+  max-height: 100vh;
+  background: #0e0d0d;
+  position: fixed;
+  overflow: hidden;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  --middle-width: 60%;
+  --side-width: 20%;
+
+  #topbar,
+  #toolbar {
+    width: var(--middle-width);
+    background: rgb(80, 80, 80);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  #topbar {
+    height: 10%;
+  }
+
+  #toolbar {
+    height: 20%;
+    bottom: 0;
+  }
+
+  #text-screen {
+    width: var(--middle-width);
+    height: 70%;
+    background: #3a3a3a;
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+  }
+
+  .sidebar {
+    width: var(--side-width);
+    height: 100%;
+    background: #242424;
+    position: absolute;
+    top: 0;
+
+    &.left {
+      left: 0;
+    }
+
+    &.right {
+      right: 0;
+    }
+
+    .characters {
+      width: 100%;
+      height: 80%;
+      border: 0.75rem solid rgba(255, 255, 255, 0);
+      box-sizing: border-box;
+      overflow: hidden;
+      overflow-y: auto;
+
+      .character {
+        width: 100%;
+        height: 25%;
+        background: rgba(39, 39, 39, 0.8);
+        position: relative;
+        top: 0;
+        left: 0;
+        font-size: 2.5rem;
+        border: 0.2rem solid #111111;
+        box-sizing: border-box;
+        user-select: none;
+        color: white;
+
+        .character-name {
+          position: absolute;
+        }
+
+        .stat-bars {
+          position: absolute;
+          width: 100%;
+          bottom: 5%;
+          left: 5%;
+          display: grid;
+          grid-gap: 5%;
+
+          .bar {
+            position: relative;
+            margin: 0;
+            width: 90%;
+            background: #111111;
+            height: 2.25rem;
+            border: 0.2rem solid black;
+
+            .bar-number {
+              position: absolute;
+              left: 50%;
+              top: 50%;
+              margin: 0;
+              font-size: 2rem;
+              transform: translate(-50%, -50%);
+              text-shadow: 0 0 0.4rem black;
+              text-transform: uppercase;
+              z-index: 1;
+            }
+
+            .bar-fill {
+              position: absolute;
+              left: 0;
+              top: 0;
+              height: 100%;
+
+              &.hp {
+                background: $hp;
+              }
+
+              &.mp {
+                background: $mp;
+              }
+
+              &.ep {
+                background: $ep;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
