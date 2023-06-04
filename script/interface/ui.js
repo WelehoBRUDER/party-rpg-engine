@@ -28,8 +28,9 @@ function createCharacterElement(character) {
     barElement.classList = `${type} bar`;
     barNumber.classList.add("bar-number");
     barFill.classList = `${type} bar-fill`;
-    barNumber.textContent = `${character.stats[type]} / ${character.stats[type + "Max"]} ${type}`;
-    barFill.style.width = `${(character.stats[type] / character.stats[type + "Max"]) * 100}%`;
+    const maxStats = character.getMaxStats();
+    barNumber.textContent = `${character.stats[type]} / ${maxStats[type]} ${type}`;
+    barFill.style.width = `${(character.stats[type] / maxStats[type]) * 100}%`;
     barElement.append(barNumber, barFill);
     statBars.appendChild(barElement);
   });
@@ -37,33 +38,31 @@ function createCharacterElement(character) {
   return characterElement;
 }
 
-const sampleCharacters = [
-  {
-    name: "Arthur Lockwood",
-    stats: {
-      hp: 100,
-      mp: 100,
-      ep: 100,
-      hpMax: 100,
-      mpMax: 100,
-      epMax: 100,
-    },
-    level: 1,
-    xp: 0,
-  },
-  {
-    name: "Bandur Ironfist",
-    stats: {
-      hp: 100,
-      mp: 100,
-      ep: 100,
-      hpMax: 100,
-      mpMax: 100,
-      epMax: 100,
-    },
-    level: 1,
-    xp: 0,
-  },
-];
-
-updateScreen();
+// const sampleCharacters = [
+//   {
+//     name: "Arthur Lockwood",
+//     stats: {
+//       hp: 100,
+//       mp: 100,
+//       ep: 100,
+//       hpMax: 100,
+//       mpMax: 100,
+//       epMax: 100,
+//     },
+//     level: 1,
+//     xp: 0,
+//   },
+//   {
+//     name: "Bandur Ironfist",
+//     stats: {
+//       hp: 100,
+//       mp: 100,
+//       ep: 100,
+//       hpMax: 100,
+//       mpMax: 100,
+//       epMax: 100,
+//     },
+//     level: 1,
+//     xp: 0,
+//   },
+// ];
