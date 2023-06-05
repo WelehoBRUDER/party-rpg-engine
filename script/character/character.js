@@ -18,6 +18,8 @@ class Character {
     // Body
     this.body = new Body(base.body);
 
+    this.equipment = { ...base.equipment };
+
     // Stores all modifiers, including those from traits and effects.
     this.allModifiers = {};
 
@@ -94,6 +96,26 @@ class Character {
     return defenses;
   }
 
+  // Weapon damage / Natural weapons damage
+  // Does not include modifiers from traits or effects, nor attributes.
+  getBaseDamage() {
+    let damage = {};
+    if (this.equipment.weapon) {
+      damage = { ...this.equipment.weapon.damage };
+    } else if (this.body.arms.naturalWeapons) {
+      this.body.arms.naturalWeapons.forEach((weapon) => {
+        Object.entries(weapon.damage).forEach(([type, value]) => {
+          if (damage[type]) {
+            damage[type] += value;
+          } else {
+            damage[type] = value;
+          }
+        });
+      });
+    }
+    return damage;
+  }
+
   // This can become a very heavy function, so it should be called sparingly.
   countRacialScores() {
     const body = { ...this.body };
@@ -136,8 +158,19 @@ const player = new Character({
   },
   traits: [traits.humanoidConstitution],
   skills: [new Skill(skills.attack)],
-  baseRace: races.orc,
-  body: { ...racialTemplates.orc },
+  baseRace: races.beastman,
+  body: { ...racialTemplates.beastman },
+  equipment: {
+    weapon: new Weapon(items.ironDagger),
+    offhand: null,
+    head: null,
+    shoulders: null,
+    body: null,
+    arms: null,
+    legs: null,
+    ring: null,
+    feet: null,
+  },
 });
 
 player.countRacialScores();

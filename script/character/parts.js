@@ -76,6 +76,14 @@ const bodyParts = {
       modifiers: {
         accuracyV: 1,
       },
+      naturalWeapons: [
+        {
+          name: "claws",
+          damage: {
+            piercing: 20,
+          },
+        },
+      ],
     },
     elf: {},
   },
