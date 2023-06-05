@@ -2,7 +2,7 @@ const defaultModifiers = {
   strengthModifiers: {
     strengthDamageP: 5,
     armorPenetrationV: 1,
-    armorP: 1,
+    armorV: 1,
   },
   agilityModifiers: {
     agilityDamageP: 5,
@@ -18,11 +18,11 @@ const defaultModifiers = {
     magicalDamageP: 5,
     magicalPenetrationV: 1,
     mpMaxV: 3,
-    wardP: 1,
+    wardV: 1,
   },
   willpowerModifiers: {
     mentalDamageP: 5,
-    resolveP: 1,
+    resolveV: 1,
     mentalResistanceV: 1,
     hpMaxV: 2,
     epMaxV: 1,
@@ -58,6 +58,14 @@ function getAllModifiers(char) {
   const modifiers = { ...defaultModifiers };
   char.traits.forEach((trait) => {
     Object.entries(trait.modifiers).forEach(([key, value]) => {
+      applyModifierToTotal(key, value, modifiers);
+    });
+  });
+  Object.entries(char.baseRace.modifiers).forEach(([key, value]) => {
+    applyModifierToTotal(key, value, modifiers);
+  });
+  Object.values(char.body).forEach((part) => {
+    Object.entries(part.modifiers).forEach(([key, value]) => {
       applyModifierToTotal(key, value, modifiers);
     });
   });

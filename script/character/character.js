@@ -11,6 +11,12 @@ class Character {
     this.passiveEffects = [];
 
     this.skills = [...base.skills];
+    // Base race determines the starting attributes.
+    // Race can be quite fluid, so it needs to be tracked separately.
+    this.baseRace = new Race(base.baseRace);
+
+    // Body
+    this.body = new Body(base.body);
 
     // Stores all modifiers, including those from traits and effects.
     this.allModifiers = {};
@@ -66,6 +72,51 @@ class Character {
     });
     return maxStats;
   }
+
+  getDefenses() {
+    const defenses = {};
+    const attributes = this.getAttributes();
+    const defTypes = ["armor", "ward", "resolve"];
+    defTypes.forEach((defType) => {
+      let base = this.allModifiers[`${defType}V`] || 0;
+      let multiplier = this.allModifiers[`${defType}P`] || 1;
+      baseAttributes.forEach((attribute) => {
+        const attributeModifiers = this.allModifiers[`${attribute}Modifiers`];
+        if (attributeModifiers[`${defType}V`]) {
+          base += attributeModifiers[`${defType}V`] * attributes[attribute];
+        }
+        if (attributeModifiers[`${defType}P`]) {
+          multiplier += (attributeModifiers[`${defType}P`] * attributes[attribute]) / 100;
+        }
+      });
+      defenses[defType] = Math.floor(base * multiplier);
+    });
+    return defenses;
+  }
+
+  // This can become a very heavy function, so it should be called sparingly.
+  countRacialScores() {
+    const body = { ...this.body };
+    const racialScoresCount = {};
+    Object.entries(racialScores).forEach(([id, race]) => {
+      racialScoresCount[id] = 0;
+      Object.entries(race.parts).forEach(([partId, part]) => {
+        // Now we need to compare our body to the requirement
+        let countScore = true;
+        if (body[partId].type !== part.type) {
+          countScore = false;
+        } else if (part.count) {
+          if (body[partId].count < part.count || body[partId].count > part.count) {
+            countScore = false;
+          }
+        }
+        if (countScore) {
+          racialScoresCount[id] += part.score;
+        }
+      });
+    });
+    this.racialScores = racialScoresCount;
+  }
 }
 
 const player = new Character({
@@ -85,7 +136,11 @@ const player = new Character({
   },
   traits: [traits.humanoidConstitution],
   skills: [new Skill(skills.attack)],
+  baseRace: races.orc,
+  body: { ...racialTemplates.orc },
 });
+
+player.countRacialScores();
 
 const sampleCharacters = [player];
 updateScreen();
