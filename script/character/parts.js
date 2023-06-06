@@ -13,6 +13,7 @@ const bodyParts = {
         magicalDamageP: 5,
       },
     },
+    goblin: {},
   },
   ears: {
     human: {},
@@ -31,6 +32,7 @@ const bodyParts = {
     feline: {
       shape: "pointy",
     },
+    goblin: {},
   },
   mouth: {
     human: {},
@@ -38,6 +40,7 @@ const bodyParts = {
       shape: "tusks",
     },
     feline: {},
+    goblin: {},
   },
   hair: {
     human: {},
@@ -62,6 +65,12 @@ const bodyParts = {
     toughFur: {
       modifiers: {
         armorV: 20,
+      },
+    },
+    goblin: {
+      modifiers: {
+        evasionV: 7,
+        hpMaxV: -5,
       },
     },
   },
@@ -158,5 +167,20 @@ const racialTemplates = {
     arms: bodyParts.arms.feline,
     legs: bodyParts.legs.feline,
     feet: bodyParts.feet.feline,
+  },
+  goblin: {
+    eyes: bodyParts.eyes.goblin,
+    ears: bodyParts.ears.elven,
+    nose: bodyParts.nose.goblin,
+    mouth: bodyParts.mouth.goblin,
+    hair: bodyParts.hair.human,
+    face: bodyParts.face.human,
+    skin: bodyParts.skin.goblin,
+    horns: { type: "none" },
+    wings: { type: "none" },
+    tail: { type: "none" },
+    arms: bodyParts.arms.human,
+    legs: bodyParts.legs.human,
+    feet: bodyParts.feet.human,
   },
 };

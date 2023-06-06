@@ -11,24 +11,35 @@ class Character {
     this.passiveEffects = [];
 
     this.skills = [...base.skills];
+    this.classes = [...base.classes];
     // Base race determines the starting attributes.
     // Race can be quite fluid, so it needs to be tracked separately.
     this.baseRace = new Race(base.baseRace);
 
     // Body
     this.body = new Body(base.body);
+    // Mutations
+    // Mutations are a special type of trait that can be gained or lost.
+    this.mutations = [...base.mutations];
 
     this.equipment = { ...base.equipment };
 
     // Stores all modifiers, including those from traits and effects.
     this.allModifiers = {};
 
+    this.updateClasses();
     this.updateAllModifiers();
     this.restoreStats();
   }
 
   updateAllModifiers() {
     this.allModifiers = getAllModifiers(this);
+  }
+
+  updateClasses() {
+    this.classes.forEach((classrole, index) => {
+      this.classes[index] = new Classrole(classrole);
+    });
   }
 
   updateSkillModifiers() {
@@ -40,7 +51,7 @@ class Character {
   restoreStats() {
     const maxStats = this.getMaxStats();
     Object.keys(this.stats).forEach((stat) => {
-      this.stats[stat] = maxStats[stat];
+      this.stats[stat] = Math.floor(maxStats[stat] * Math.random());
     });
   }
 
@@ -54,6 +65,14 @@ class Character {
     return attributes;
   }
 
+  getMutationsLimit() {
+    return 3 + this.allModifiers.mutationsLimitV || 0;
+  }
+
+  getMutationsBasePoints() {
+    return 2 + this.allModifiers.mutationPointsV || 0;
+  }
+
   getMaxStats() {
     const stats = Object.keys(this.stats);
     const currentAttributes = this.getAttributes();
@@ -61,6 +80,7 @@ class Character {
     stats.forEach((stat) => {
       let base = this.allModifiers[`${stat}MaxV`] || 0;
       let modifier = this.allModifiers[`${stat}MaxP`] || 1;
+
       baseAttributes.forEach((attribute) => {
         const attributeModifiers = this.allModifiers[`${attribute}Modifiers`];
         if (attributeModifiers[`${stat}MaxV`]) {
@@ -75,25 +95,75 @@ class Character {
     return maxStats;
   }
 
+  getEffectsFromAttributes(key) {
+    const attributes = this.getAttributes();
+    let base = 0;
+    let multiplier = 0;
+    baseAttributes.forEach((attribute) => {
+      const attributeModifiers = this.allModifiers[`${attribute}Modifiers`];
+      if (attributeModifiers[`${key}V`]) {
+        base += attributeModifiers[`${key}V`] * attributes[attribute];
+      }
+      if (attributeModifiers[`${key}P`]) {
+        multiplier += (attributeModifiers[`${key}P`] * attributes[attribute]) / 100;
+      }
+    });
+    return { baseVal: base, multiplierVal: multiplier };
+  }
+
   getDefenses() {
     const defenses = {};
-    const attributes = this.getAttributes();
     const defTypes = ["armor", "ward", "resolve"];
     defTypes.forEach((defType) => {
       let base = this.allModifiers[`${defType}V`] || 0;
       let multiplier = this.allModifiers[`${defType}P`] || 1;
-      baseAttributes.forEach((attribute) => {
-        const attributeModifiers = this.allModifiers[`${attribute}Modifiers`];
-        if (attributeModifiers[`${defType}V`]) {
-          base += attributeModifiers[`${defType}V`] * attributes[attribute];
-        }
-        if (attributeModifiers[`${defType}P`]) {
-          multiplier += (attributeModifiers[`${defType}P`] * attributes[attribute]) / 100;
-        }
-      });
+      const attributeEffects = this.getEffectsFromAttributes(defType);
+      base += attributeEffects.baseVal;
+      multiplier += attributeEffects.multiplierVal;
       defenses[defType] = Math.floor(base * multiplier);
     });
     return defenses;
+  }
+
+  getResistances() {
+    const resistances = {};
+    Object.entries(damageTypes).forEach(([type, damageType]) => {
+      resistances[type] = {};
+      damageType.subTypes.forEach((subType) => {
+        let base = this.allModifiers[`${subType}ResistanceV`] || 0;
+        let multiplier = this.allModifiers[`${subType}ResistanceP`] || 1;
+        const attributeEffects = this.getEffectsFromAttributes(subType + "Resistance");
+        base += attributeEffects.baseVal;
+        multiplier += attributeEffects.multiplierVal;
+        resistances[type][subType] = Math.floor(base * multiplier);
+      });
+    });
+    return resistances;
+  }
+
+  // Also includes resilience, not just evasion.
+  getEvasion() {
+    const dodge = {};
+    Object.values(damageTypes).forEach((damageType) => {
+      damageType.dodge.forEach((dodgeType) => {
+        let base = this.allModifiers[`${dodgeType}V`] || 0;
+        let multiplier = this.allModifiers[`${dodgeType}P`] || 1;
+        const attributeEffects = this.getEffectsFromAttributes(dodgeType);
+        base += attributeEffects.baseVal;
+        multiplier += attributeEffects.multiplierVal;
+        dodge[dodgeType] = Math.floor(base * multiplier);
+      });
+    });
+    return dodge;
+  }
+
+  getAccuracy() {
+    let base = this.allModifiers.accuracyV || 0;
+    let multiplier = this.allModifiers.accuracyP || 1;
+    const attributeEffects = this.getEffectsFromAttributes("accuracy");
+    base += attributeEffects.baseVal;
+    multiplier += attributeEffects.multiplierVal;
+    return Math.floor(base * multiplier);
   }
 
   // Weapon damage / Natural weapons damage
@@ -140,40 +210,3 @@ class Character {
     this.racialScores = racialScoresCount;
   }
 }
-
-const player = new Character({
-  id: "player",
-  name: "Player",
-  attributes: {
-    strength: 0,
-    agility: 0,
-    vitality: 0,
-    intelligence: 0,
-    willpower: 0,
-  },
-  stats: {
-    hp: 0,
-    ep: 0,
-    mp: 0,
-  },
-  traits: [traits.humanoidConstitution],
-  skills: [new Skill(skills.attack)],
-  baseRace: races.beastman,
-  body: { ...racialTemplates.beastman },
-  equipment: {
-    weapon: new Weapon(items.ironDagger),
-    offhand: null,
-    head: null,
-    shoulders: null,
-    body: null,
-    arms: null,
-    legs: null,
-    ring: null,
-    feet: null,
-  },
-});
-
-player.countRacialScores();
-
-const sampleCharacters = [player];
-updateScreen();

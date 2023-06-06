@@ -8,11 +8,12 @@ const defaultModifiers = {
     agilityDamageP: 5,
     epMaxV: 3,
     evasionV: 1,
+    accuracyV: 1,
     initiativeV: 1,
   },
   vitalityModifiers: {
     hpMaxV: 5,
-    physicalResistanceV: 1,
+    physicalResilienceV: 1,
   },
   intelligenceModifiers: {
     magicalDamageP: 5,
@@ -23,7 +24,7 @@ const defaultModifiers = {
   willpowerModifiers: {
     mentalDamageP: 5,
     resolveV: 1,
-    mentalResistanceV: 1,
+    mentalResilienceV: 1,
     hpMaxV: 2,
     epMaxV: 1,
     mpMaxV: 1,
@@ -37,20 +38,33 @@ const defaultModifiers = {
   magicalDamageP: 1,
   mentalDamageP: 1,
   initiativeV: 0,
+  accuracyV: 0,
   evasionV: 0,
   armorP: 1,
-  physicalResistanceP: 1,
+  physicalResilienceP: 1,
   wardP: 1,
-  magicalResistanceP: 1,
+  magicalResilienceP: 1,
   resolveP: 1,
-  mentalResistanceP: 1,
+  mentalResilienceP: 1,
   armorV: 0,
-  physicalResistanceV: 0,
+  physicalResilienceV: 0,
   wardV: 0,
-  magicalResistanceV: 0,
+  magicalResilienceV: 0,
   resolveV: 0,
-  mentalResistanceV: 0,
+  mentalResilienceV: 0,
 };
+// Quick explanation
+// Defense = reduces incoming damage by a falloff percentage
+// Penetration = reduces enemy defense by a flat amount
+// Resilience/Evasion = improves chance of completely negating most attacks
+// Accuracy = improves chance of hitting with all attacks, reduces enemy evasion/resilience by flat amount
+// Resistance = reduces incoming damage of a specific type by an absolute percentage
+
+// Breakdown
+// Evasion = counters most weapon attacks and aoes
+// Physical Resilience = counters headfirst physical attacks
+// Magical Resilience = counters magical attacks
+// Mental Resilience = counters mental attacks
 
 const baseAttributes = ["strength", "agility", "vitality", "intelligence", "willpower"];
 
@@ -60,6 +74,9 @@ function getAllModifiers(char) {
     Object.entries(trait.modifiers).forEach(([key, value]) => {
       applyModifierToTotal(key, value, modifiers);
     });
+  });
+  char.classes.forEach((classrole) => {
+    modifiers["hpMaxV"] += classrole.hpOnLevelUp * classrole.level;
   });
   Object.entries(char.baseRace.modifiers).forEach(([key, value]) => {
     applyModifierToTotal(key, value, modifiers);

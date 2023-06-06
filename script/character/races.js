@@ -59,6 +59,17 @@ const races = {
       agilityV: 1,
     },
   },
+  // Initially very weak, but can become very powerful.
+  goblin: {
+    id: "goblin",
+    name: "Goblin",
+    modifiers: {
+      strengthV: -1,
+      vitalityV: -1,
+      agilityV: 2,
+      intelligenceV: 2,
+    },
+  },
 };
 
 const racialScores = {
@@ -132,6 +143,24 @@ const racialScores = {
       arms: { type: "elven", score: 2 },
       legs: { type: "elven", score: 2 },
       feet: { type: "elven", score: 2 },
+    },
+  },
+  goblin: {
+    scoreRequired: 14,
+    parts: {
+      eyes: { type: "goblin", score: 1 },
+      ears: { type: "elven", score: 1 },
+      nose: { type: "goblin", score: 1 },
+      mouth: { type: "goblin", score: 2 },
+      hair: { type: "human", score: 1 },
+      face: { type: "human", score: 1 },
+      skin: { type: "goblin", score: 2 },
+      horns: { type: "none", score: 1 },
+      wings: { type: "none", score: 1 },
+      tail: { type: "none", score: 1 },
+      arms: { type: "human", score: 1 },
+      legs: { type: "human", score: 1 },
+      feet: { type: "human", score: 1 },
     },
   },
 };

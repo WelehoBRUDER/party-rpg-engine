@@ -2,12 +2,23 @@
 function updateScreen() {
   leftCharacters.innerHTML = "";
   // For now just create elements for each character
-  sampleCharacters.forEach((character) => {
+  party.forEach((character) => {
     const characterElement = createCharacterElement(character);
     if (!characterElement) throw new Error("Character element not created");
     leftCharacters.appendChild(characterElement);
   });
+  if (combat) {
+    rightCharacters.innerHTML = "";
+    const enemyEncounter = [new Character(enemies.goblin), new Character(enemies.goblin)];
+    enemyEncounter.forEach((character) => {
+      const characterElement = createCharacterElement(character);
+      if (!characterElement) throw new Error("Character element not created");
+      rightCharacters.appendChild(characterElement);
+    });
+  }
 }
+
+const combat = true;
 
 function createCharacterElement(character) {
   const characterElement = document.createElement("div");
