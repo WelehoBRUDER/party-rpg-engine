@@ -78,13 +78,8 @@ function getAllModifiers(char) {
   char.classes.forEach((classrole) => {
     modifiers["hpMaxV"] += classrole.hpOnLevelUp * classrole.level;
   });
-  Object.entries(char.baseRace.modifiers).forEach(([key, value]) => {
+  Object.entries(char.race.modifiers).forEach(([key, value]) => {
     applyModifierToTotal(key, value, modifiers);
-  });
-  Object.values(char.body).forEach((part) => {
-    Object.entries(part.modifiers).forEach(([key, value]) => {
-      applyModifierToTotal(key, value, modifiers);
-    });
   });
   return modifiers;
 }

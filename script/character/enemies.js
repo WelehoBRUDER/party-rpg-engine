@@ -17,8 +17,7 @@ const enemies = {
     traits: [traits.goblinoidConstitution],
     skills: [new Skill(skills.attack)],
     classes: [sampleClasses.rogue],
-    baseRace: races.goblin,
-    body: { ...racialTemplates.goblin },
+    race: races.goblin,
     mutations: [],
     equipment: {
       weapon: new Weapon(items.ironDagger),

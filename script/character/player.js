@@ -22,8 +22,7 @@ const player = new Player({
   traits: [traits.humanoidConstitution],
   skills: [new Skill(skills.attack)],
   classes: [sampleClasses.fighter],
-  baseRace: races.beastman,
-  body: { ...racialTemplates.beastman },
+  race: races.beastman,
   mutations: [],
   equipment: {
     weapon: new Weapon(items.ironDagger),
@@ -39,5 +38,4 @@ const player = new Player({
 });
 
 const party = [player, new Character(companions.rinium)];
-player.countRacialScores();
 updateScreen();

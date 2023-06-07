@@ -17,8 +17,7 @@ const companions = {
     traits: [traits.humanoidConstitution],
     skills: [new Skill(skills.attack)],
     classes: [sampleClasses.wizard],
-    baseRace: races.elf,
-    body: { ...racialTemplates.elf },
+    race: races.elf,
     mutations: [],
     equipment: {
       weapon: new Weapon(items.ironDagger),

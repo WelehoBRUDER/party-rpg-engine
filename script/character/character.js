@@ -12,12 +12,9 @@ class Character {
 
     this.skills = [...base.skills];
     this.classes = [...base.classes];
-    // Base race determines the starting attributes.
-    // Race can be quite fluid, so it needs to be tracked separately.
-    this.baseRace = new Race(base.baseRace);
+    // Race determines the starting attributes.
+    this.race = new Race(base.race);
 
-    // Body
-    this.body = new Body(base.body);
     // Mutations
     // Mutations are a special type of trait that can be gained or lost.
     this.mutations = [...base.mutations];
@@ -184,29 +181,5 @@ class Character {
       });
     }
     return damage;
-  }
-
-  // This can become a very heavy function, so it should be called sparingly.
-  countRacialScores() {
-    const body = { ...this.body };
-    const racialScoresCount = {};
-    Object.entries(racialScores).forEach(([id, race]) => {
-      racialScoresCount[id] = 0;
-      Object.entries(race.parts).forEach(([partId, part]) => {
-        // Now we need to compare our body to the requirement
-        let countScore = true;
-        if (body[partId].type !== part.type) {
-          countScore = false;
-        } else if (part.count) {
-          if (body[partId].count < part.count || body[partId].count > part.count) {
-            countScore = false;
-          }
-        }
-        if (countScore) {
-          racialScoresCount[id] += part.score;
-        }
-      });
-    });
-    this.racialScores = racialScoresCount;
   }
 }
