@@ -11,7 +11,7 @@ class Race {
 }
 
 // These are just the main archetypes, not the subraces or chimeras.
-// All starter races have 5 attribute points to distribute.
+// All starter races have 6 attribute points to distribute.
 const races = {
   // Starter race
   // Fairly well balanced, suited for most classes.
@@ -24,6 +24,7 @@ const races = {
       vitalityV: 1,
       intelligenceV: 1,
       willpowerV: 1,
+      charismaV: 1,
     },
   },
   // Starter race
@@ -32,7 +33,7 @@ const races = {
     id: "orc",
     name: "Orc",
     modifiers: {
-      strengthV: 2,
+      strengthV: 3,
       vitalityV: 2,
       agilityV: 1,
     },
@@ -43,7 +44,7 @@ const races = {
     id: "beastman",
     name: "Beastman",
     modifiers: {
-      agilityV: 2,
+      agilityV: 3,
       willpowerV: 2,
       vitalityV: 1,
     },
@@ -54,7 +55,7 @@ const races = {
     id: "elf",
     name: "Elf",
     modifiers: {
-      intelligenceV: 2,
+      intelligenceV: 3,
       willpowerV: 2,
       agilityV: 1,
     },
@@ -68,6 +69,7 @@ const races = {
       vitalityV: -1,
       agilityV: 2,
       intelligenceV: 2,
+      critChanceV: 15,
     },
   },
 };

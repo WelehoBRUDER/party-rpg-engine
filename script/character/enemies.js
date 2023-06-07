@@ -8,6 +8,7 @@ const enemies = {
       vitality: 0,
       intelligence: 0,
       willpower: 0,
+      charisma: 0,
     },
     stats: {
       hp: 0,
@@ -16,7 +17,7 @@ const enemies = {
     },
     traits: [traits.goblinoidConstitution],
     skills: [new Skill(skills.attack)],
-    classes: [sampleClasses.rogue],
+    classes: [sampleClasses.savage],
     race: races.goblin,
     mutations: [],
     equipment: {

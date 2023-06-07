@@ -48,15 +48,16 @@ class Character {
   restoreStats() {
     const maxStats = this.getMaxStats();
     Object.keys(this.stats).forEach((stat) => {
-      this.stats[stat] = Math.floor(maxStats[stat] * Math.random());
+      this.stats[stat] = maxStats[stat];
     });
   }
 
-  getAttributes() {
+  getAttributes(options = {}) {
     const attributes = { ...this.attributes };
+    const allModifiers = options?.modifiers || this.allModifiers;
     Object.keys(attributes).forEach((attribute) => {
-      const bonus = this.allModifiers[`${attribute}V`] || 0;
-      const multiplier = this.allModifiers[`${attribute}P`] || 1;
+      const bonus = allModifiers[`${attribute}V`] || 0;
+      const multiplier = allModifiers[`${attribute}P`] || 1;
       attributes[attribute] = Math.floor((attributes[attribute] + bonus) * multiplier);
     });
     return attributes;
@@ -72,40 +73,13 @@ class Character {
 
   getMaxStats() {
     const stats = Object.keys(this.stats);
-    const currentAttributes = this.getAttributes();
     const maxStats = {};
     stats.forEach((stat) => {
       let base = this.allModifiers[`${stat}MaxV`] || 0;
       let modifier = this.allModifiers[`${stat}MaxP`] || 1;
-
-      baseAttributes.forEach((attribute) => {
-        const attributeModifiers = this.allModifiers[`${attribute}Modifiers`];
-        if (attributeModifiers[`${stat}MaxV`]) {
-          base += attributeModifiers[`${stat}MaxV`] * currentAttributes[attribute];
-        }
-        if (attributeModifiers[`${stat}MaxP`]) {
-          modifier += (attributeModifiers[`${stat}MaxP`] * currentAttributes[attribute]) / 100;
-        }
-      });
       maxStats[stat] = Math.floor(base * modifier);
     });
     return maxStats;
-  }
-
-  getEffectsFromAttributes(key) {
-    const attributes = this.getAttributes();
-    let base = 0;
-    let multiplier = 0;
-    baseAttributes.forEach((attribute) => {
-      const attributeModifiers = this.allModifiers[`${attribute}Modifiers`];
-      if (attributeModifiers[`${key}V`]) {
-        base += attributeModifiers[`${key}V`] * attributes[attribute];
-      }
-      if (attributeModifiers[`${key}P`]) {
-        multiplier += (attributeModifiers[`${key}P`] * attributes[attribute]) / 100;
-      }
-    });
-    return { baseVal: base, multiplierVal: multiplier };
   }
 
   getDefenses() {
@@ -114,9 +88,6 @@ class Character {
     defTypes.forEach((defType) => {
       let base = this.allModifiers[`${defType}V`] || 0;
       let multiplier = this.allModifiers[`${defType}P`] || 1;
-      const attributeEffects = this.getEffectsFromAttributes(defType);
-      base += attributeEffects.baseVal;
-      multiplier += attributeEffects.multiplierVal;
       defenses[defType] = Math.floor(base * multiplier);
     });
     return defenses;
@@ -129,9 +100,6 @@ class Character {
       damageType.subTypes.forEach((subType) => {
         let base = this.allModifiers[`${subType}ResistanceV`] || 0;
         let multiplier = this.allModifiers[`${subType}ResistanceP`] || 1;
-        const attributeEffects = this.getEffectsFromAttributes(subType + "Resistance");
-        base += attributeEffects.baseVal;
-        multiplier += attributeEffects.multiplierVal;
         resistances[type][subType] = Math.floor(base * multiplier);
       });
     });
@@ -145,9 +113,6 @@ class Character {
       damageType.dodge.forEach((dodgeType) => {
         let base = this.allModifiers[`${dodgeType}V`] || 0;
         let multiplier = this.allModifiers[`${dodgeType}P`] || 1;
-        const attributeEffects = this.getEffectsFromAttributes(dodgeType);
-        base += attributeEffects.baseVal;
-        multiplier += attributeEffects.multiplierVal;
         dodge[dodgeType] = Math.floor(base * multiplier);
       });
     });
@@ -157,10 +122,35 @@ class Character {
   getAccuracy() {
     let base = this.allModifiers.accuracyV || 0;
     let multiplier = this.allModifiers.accuracyP || 1;
-    const attributeEffects = this.getEffectsFromAttributes("accuracy");
-    base += attributeEffects.baseVal;
-    multiplier += attributeEffects.multiplierVal;
     return Math.floor(base * multiplier);
+  }
+
+  getCrit() {
+    const crit = { chance: 0, power: 0 };
+    crit.chance = this.allModifiers.critChanceV || 0;
+    crit.power = this.allModifiers.critPowerV || 0;
+    return crit;
+  }
+
+  getPenetration() {
+    const penetration = {};
+    Object.values(damageTypes).forEach((damageType) => {
+      const penetrationType = damageType.penetration;
+      let base = this.allModifiers[`${penetrationType}V`] || 0;
+      let multiplier = this.allModifiers[`${penetrationType}P`] || 1;
+      penetration[penetrationType] = Math.floor(base * multiplier);
+    });
+    return penetration;
+  }
+
+  getPower() {
+    const power = {};
+    Object.keys(damageTypes).forEach((damageType) => {
+      const base = this.allModifiers[`${damageType}PowerV`] || 0;
+      const multiplier = this.allModifiers[`${damageType}PowerP`] || 1;
+      power[damageType] = Math.floor(base * multiplier);
+    });
+    return power;
   }
 
   // Weapon damage / Natural weapons damage
@@ -169,16 +159,13 @@ class Character {
     let damage = {};
     if (this.equipment.weapon) {
       damage = { ...this.equipment.weapon.damage };
-    } else if (this.body.arms.naturalWeapons) {
-      this.body.arms.naturalWeapons.forEach((weapon) => {
-        Object.entries(weapon.damage).forEach(([type, value]) => {
-          if (damage[type]) {
-            damage[type] += value;
-          } else {
-            damage[type] = value;
-          }
-        });
-      });
+    } else {
+      if (this.allModifiers.naturalWeaponsDamage) {
+        damage = { ...this.allModifiers.naturalWeaponsDamage };
+      } else {
+        const baseFistDamage = 10 + (this.allModifiers.fistDamageV || 0);
+        damage.bludgeoning = Math.floor(baseFistDamage * (1 + (this.allModifiers.fistDamageP || 0)));
+      }
     }
     return damage;
   }

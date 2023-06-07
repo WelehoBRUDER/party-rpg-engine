@@ -1,34 +1,4 @@
 const defaultModifiers = {
-  strengthModifiers: {
-    strengthDamageP: 5,
-    armorPenetrationV: 1,
-    armorV: 1,
-  },
-  agilityModifiers: {
-    agilityDamageP: 5,
-    epMaxV: 3,
-    evasionV: 1,
-    accuracyV: 1,
-    initiativeV: 1,
-  },
-  vitalityModifiers: {
-    hpMaxV: 5,
-    physicalResilienceV: 1,
-  },
-  intelligenceModifiers: {
-    magicalDamageP: 5,
-    magicalPenetrationV: 1,
-    mpMaxV: 3,
-    wardV: 1,
-  },
-  willpowerModifiers: {
-    mentalDamageP: 5,
-    resolveV: 1,
-    mentalResilienceV: 1,
-    hpMaxV: 2,
-    epMaxV: 1,
-    mpMaxV: 1,
-  },
   expGainP: 1,
   goldGainP: 1,
   luckP: 1,
@@ -52,6 +22,8 @@ const defaultModifiers = {
   magicalResilienceV: 0,
   resolveV: 0,
   mentalResilienceV: 0,
+  critChanceV: 10,
+  critPowerV: 30,
 };
 // Quick explanation
 // Defense = reduces incoming damage by a falloff percentage
@@ -66,7 +38,44 @@ const defaultModifiers = {
 // Magical Resilience = counters magical attacks
 // Mental Resilience = counters mental attacks
 
-const baseAttributes = ["strength", "agility", "vitality", "intelligence", "willpower"];
+const attributeModifiers = {
+  strength: {
+    physicalPowerV: 5,
+    armorPenetrationV: 1,
+    armorV: 1,
+  },
+  agility: {
+    epMaxV: 3,
+    evasionV: 1,
+    accuracyV: 1,
+    initiativeV: 1,
+  },
+  vitality: {
+    hpMaxV: 5,
+    physicalResilienceV: 1,
+  },
+  intelligence: {
+    magicalPowerV: 5,
+    magicalPenetrationV: 1,
+    mpMaxV: 3,
+    wardV: 1,
+  },
+  willpower: {
+    resolveV: 1,
+    mentalResilienceV: 1,
+    hpMaxV: 2,
+    epMaxV: 1,
+    mpMaxV: 1,
+  },
+  charisma: {
+    mentalPowerV: 5,
+    leadershipV: 2,
+    mentalPenetrationV: 1,
+    magicalResilienceV: 1,
+  },
+};
+
+const baseAttributes = ["strength", "agility", "vitality", "intelligence", "willpower", "charisma"];
 
 function getAllModifiers(char) {
   const modifiers = { ...defaultModifiers };
@@ -80,6 +89,16 @@ function getAllModifiers(char) {
   });
   Object.entries(char.race.modifiers).forEach(([key, value]) => {
     applyModifierToTotal(key, value, modifiers);
+  });
+  char.mutations.forEach((mutation) => {
+    Object.entries(mutation.modifiers).forEach(([key, value]) => {
+      applyModifierToTotal(key, value, modifiers);
+    });
+  });
+  Object.entries(char.getAttributes({ modifiers })).forEach(([attrKey, attrValue]) => {
+    Object.entries(attributeModifiers[attrKey]).forEach(([key, value]) => {
+      applyModifierToTotal(key, value * attrValue, modifiers);
+    });
   });
   return modifiers;
 }

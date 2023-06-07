@@ -33,4 +33,9 @@ const sampleClasses = {
     id: "beast",
     hpOnLevelUp: 10,
   },
+  // Savage is a special class only for savage type enemies (like wild goblins, orcs, etc.)
+  savage: {
+    id: "savage",
+    hpOnLevelUp: 12,
+  },
 };

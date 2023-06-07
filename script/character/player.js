@@ -13,6 +13,7 @@ const player = new Player({
     vitality: 0,
     intelligence: 0,
     willpower: 0,
+    charisma: 0,
   },
   stats: {
     hp: 0,
@@ -22,7 +23,7 @@ const player = new Player({
   traits: [traits.humanoidConstitution],
   skills: [new Skill(skills.attack)],
   classes: [sampleClasses.fighter],
-  race: races.beastman,
+  race: races.human,
   mutations: [],
   equipment: {
     weapon: new Weapon(items.ironDagger),
@@ -38,4 +39,3 @@ const player = new Player({
 });
 
 const party = [player, new Character(companions.rinium)];
-updateScreen();

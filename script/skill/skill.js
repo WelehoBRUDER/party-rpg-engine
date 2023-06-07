@@ -2,11 +2,11 @@ class Skill {
   constructor(skill) {
     this.id = skill.id;
     this.type = skill.type;
-    this.attackPower = skill.attackPower ?? 0;
-    this.attackPenetration = skill.attackPenetration ?? 0;
-    this.attackDamageTypes = skill.attackDamageTypes ? [...skill.attackDamageTypes] : [];
+    this.attackDamages = skill.attackDamages ? [...skill.attackDamages] : [];
+    this.attackType = skill.attackType ?? "weapon";
     this.cooldown = skill.cooldown ?? 0;
     this.onCooldown = skill.onCooldown ?? 0;
+    this.modifiers = { ...skill.modifiers };
   }
 
   updateStats(owner) {
@@ -30,15 +30,42 @@ class Skill {
       }
     });
   }
+
+  getAttackDamages(owner) {
+    const attackDamagesArray = [...this.attackDamages];
+    attackDamagesArray.forEach((type, index) => {
+      if (type.fromWeapon) {
+        attackDamagesArray.splice(index, 1, { ...owner.getBaseDamage() });
+      }
+    });
+    const attackDamages = {};
+    attackDamagesArray.forEach((type) => {
+      Object.entries(type).forEach(([key, value]) => {
+        if (!attackDamages[key]) attackDamages[key] = 0;
+        attackDamages[key] += value;
+      });
+    });
+    return attackDamages;
+  }
 }
 
 const skills = {
   attack: {
     id: "attack",
     type: "attack",
-    attackPower: 1,
-    attackPenetration: 0,
-    attackDamageTypes: ["fromWeapon"],
+    attackDamages: [{ fromWeapon: true }],
+    attackType: "weapon",
     cooldown: 0,
+  },
+  focusedBlow: {
+    id: "focusedBlow",
+    type: "attack",
+    attackDamages: [{ fromWeapon: true }],
+    attackType: "weapon",
+    cooldown: 3,
+    modifiers: {
+      physicalPowerV: 100,
+      accuracyV: 20,
+    },
   },
 };

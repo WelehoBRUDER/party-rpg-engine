@@ -9,8 +9,7 @@ function updateScreen() {
   });
   if (combat) {
     rightCharacters.innerHTML = "";
-    const enemyEncounter = [new Character(enemies.goblin), new Character(enemies.goblin)];
-    enemyEncounter.forEach((character) => {
+    encounters.goblinDuo.enemies.forEach((character) => {
       const characterElement = createCharacterElement(character);
       if (!characterElement) throw new Error("Character element not created");
       rightCharacters.appendChild(characterElement);

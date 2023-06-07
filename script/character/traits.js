@@ -23,6 +23,7 @@ const traits = {
       hpMaxV: 30,
       mpMaxV: 10,
       epMaxV: 20,
+      evasionV: 5,
     },
   },
 };

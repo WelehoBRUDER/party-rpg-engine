@@ -8,6 +8,7 @@ const companions = {
       vitality: 0,
       intelligence: 0,
       willpower: 0,
+      charisma: 0,
     },
     stats: {
       hp: 0,

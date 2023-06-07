@@ -17,7 +17,9 @@
     </div>
     <div id="topbar"></div>
     <div id="text-screen"></div>
-    <div id="toolbar"></div>
+    <div id="toolbar">
+      <button id="btn-attack" onclick="attack()">Attack</button>
+    </div>
     <div class="sidebar right">
       <div class="characters"></div>
     </div>
@@ -26,10 +28,16 @@
 
 </html>
 
+<!-- Localization -->
+<script src="script/language/general_english.js"></script>
+
 <!-- Interface scripts -->
 <script src="script/interface/elements.js"></script>
 <script src="script/interface/scale.js"></script>
 <script src="script/interface/ui.js"></script>
+
+<!-- Game scripts -->
+<script src="script/game/game.js"></script>
 
 <!-- Skills -->
 <script src="script/skill/skill.js"></script>
@@ -56,4 +64,6 @@
 <script src="script/character/player.js"></script>
 
 <script src="script/combat/damage.js"></script>
+<script src="script/combat/encounters.js"></script>
 <script src="script/combat/battlescreen.js"></script>
+<script src="script/combat/combat.js"></script>
