@@ -143,4 +143,44 @@ body {
       }
     }
   }
+
+  pre {
+    margin: 0;
+    font-size: 1.5em;
+    span {
+      margin: 0;
+      color: inherit;
+      font-size: inherit;
+      font-family: "Almendra", serif;
+      text-shadow: 0px 0px 1rem rgba(0, 0, 0, 0.6);
+      line-height: 1.5rem;
+    }
+
+    img {
+      width: 1.5rem;
+      vertical-align: middle;
+    }
+
+    img.medium {
+      width: 2rem;
+    }
+
+    .effect-container,
+    .ability-container {
+      border: 0.1rem solid gold;
+      padding: 0.1rem;
+      background: rgba(40, 40, 40, 0.9);
+      margin-left: 0.25rem;
+      margin-top: 0.25rem;
+      line-height: 1.5rem;
+    }
+
+    .ability-container {
+      .effect-container {
+        border: 0.05rem solid rgb(253, 253, 253);
+        background: rgba(25, 25, 25, 0.9);
+        line-height: 1.5rem;
+      }
+    }
+  }
 }

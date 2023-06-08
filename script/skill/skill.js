@@ -33,6 +33,7 @@ class Skill {
 
   getAttackDamages(owner) {
     const attackDamagesArray = [...this.attackDamages];
+    const attackPower = owner.getPower();
     attackDamagesArray.forEach((type, index) => {
       if (type.fromWeapon) {
         attackDamagesArray.splice(index, 1, { ...owner.getBaseDamage() });
@@ -45,6 +46,12 @@ class Skill {
         attackDamages[key] += value;
       });
     });
+    Object.entries(attackDamages).forEach(([key, value]) => {
+      const damageArchetype = getDamageArchetype(key);
+      const attackMultiplier = 1 + attackPower[damageArchetype.id] / 100;
+      attackDamages[key] = Math.floor(value * attackMultiplier);
+    });
+    console.log(attackDamages);
     return attackDamages;
   }
 }
